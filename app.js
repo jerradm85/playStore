@@ -14,18 +14,22 @@ const playStore = require('./playStore.js');
 app.get('/apps', (req, res) => {
     const { search = "", sort, genres } = req.query;
 
+    let newSort, newGenres;
+
     if (sort) {
-        if (!['app', 'rating'].includes(sort)) {
+        newSort = capitalize(sort);
+        if (!['App', 'Rating'].includes(newSort)) {
             return res.status(400).send('Not a valid sort selector.')
         }
     }
-    let newGenres = capitalize(genres);
-
-    if (newGenres)
+ 
+    if (genres) {
+        newGenres = capitalize(genres);
         if (!['Action', 'Puzzle', 'Strategy', 'Casual', 'Arcade', 'Card']
             .includes(newGenres)) {
             return res.status(400).send('Not a valid genre selector.')
         }
+    }
 
     const results = playStore.filter(apps =>
         apps
@@ -34,11 +38,10 @@ app.get('/apps', (req, res) => {
             .includes(search.toLowerCase()))
 
     if (sort) {
-        const sortCap = capitalize(sort);
         results.sort((a, b) => {
-            return a[sortCap] > b[sortCap]
+            return a[newSort] > b[newSort]
                 ? 1
-                : a[sortCap] < b[sortCap]
+                : a[newSort] < b[newSort]
                     ? -1
                     : 0;
         });
