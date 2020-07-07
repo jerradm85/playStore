@@ -11,6 +11,7 @@ app.use(morgan('common'));
 
 const playStore = require('./playStore.js');
 
+//methods start here
 app.get('/apps', (req, res) => {
     const { search = "", sort, genres } = req.query;
 
@@ -39,9 +40,9 @@ app.get('/apps', (req, res) => {
 
     if (sort) {
         results.sort((a, b) => {
-            return a[newSort] > b[newSort]
+            return a[newSort] < b[newSort]
                 ? 1
-                : a[newSort] < b[newSort]
+                : a[newSort] > b[newSort]
                     ? -1
                     : 0;
         });
@@ -55,7 +56,4 @@ app.get('/apps', (req, res) => {
     res.json(newVar);
 })
 
-
-app.listen(8000, () => {
-    console.log('Server started on PORT 8000...');
-});
+module.exports = app;
